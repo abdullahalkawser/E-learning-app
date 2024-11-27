@@ -53,7 +53,7 @@ const Courseitem: React.FC<CourseItemProps> = ({ item }) => {
       <Link
         href={{
           pathname: '/(auth)/News',
-          params: { coursse: item }, // Pass any params if required
+
         }}
         style={{
           marginTop: 10,
