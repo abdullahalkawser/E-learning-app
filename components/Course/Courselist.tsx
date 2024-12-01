@@ -3,7 +3,7 @@ import { Text, View, ActivityIndicator, FlatList, Image } from 'react-native';
 import { getcourselist } from '@/app/api';
 import Courseitem from './Courseitem';
 
-import { TouchableOpacity } from 'react-native';
+
 
 
 // Define the type for course items

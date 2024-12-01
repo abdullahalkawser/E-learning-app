@@ -5,8 +5,8 @@ import { gql, request } from 'graphql-request'
 
 export const getcourselist  = async()=>{
     const query = gql`
-    query CourseQuery {
-  courses(where: {level: besic}) {
+ query CourseQuery {
+    courses {
     id
     name
     price
@@ -17,8 +17,21 @@ export const getcourselist  = async()=>{
     banner {
       url
     }
+    description {
+      markdown
+    }
     chapters {
+      title
       id
+      content {
+        heading
+        description {
+          markdown
+        }
+        output {
+          markdown
+        }
+      }
     }
   }
 }
