@@ -1,5 +1,7 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
+
 
 type ChapterContent = {
   heading: string;
@@ -21,66 +23,48 @@ type ChaptureProps = {
 
 const Chapture: React.FC<ChaptureProps> = ({ coursettt }) => {
   const { chapters } = coursettt;
-  console.log(chapters)
+
+  const [visibleChapterIndex, setVisibleChapterIndex] = useState<number | null>(null);
+
+  const toggleChapterVisibility = (index: number) => {
+    setVisibleChapterIndex(visibleChapterIndex === index ? null : index);
+  };
 
   if (!Array.isArray(chapters) || chapters.length === 0) {
     return (
-      <View style={styles.container}>
-        <Text style={styles.errorText}>No chapters available</Text>
+      <View className='bg-red-500'>
+        <Text className='text-red-700 text-lg' >No chapters available</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
-      {chapters.map((chapter) => (
-        <View key={chapter.id} style={styles.chapterContainer}>
-          <Text style={styles.chapterTitle}>{chapter.title}</Text>
-          {chapter.content.map((content, index) => (
-            <View key={index} style={styles.contentContainer}>
-              <Text style={styles.heading}>{content.heading}</Text>
-              {/* <Text style={styles.description}>{content.description.markdown}</Text>
-              <Text style={styles.output}>{content.output.markdown}</Text> */}
+    <View className='p-2 mt-5'>
+      {chapters.map((chapter, chapterIndex) => (
+        <View key={chapter.id} className='mb-5'>
+<View className=" p-3 flex-row justify-between items-center rounded-xl bg-gray-100 h-20">
+  <TouchableOpacity onPress={() => toggleChapterVisibility(chapterIndex)}>
+    <Text className="text-lg font-bold">{chapterIndex +0 + 1}. {chapter.title}</Text>
+  </TouchableOpacity>
+  <Ionicons name="play-circle" size={27} color="black" className="-ml-10" />
+</View>
+
+          {visibleChapterIndex === chapterIndex && (
+            <View>
+              {chapter.content.map((content, index) => (
+                <View key={index} className='ml-5 mb-3'>
+                  <Text className='text-base font-semibold'>{content.heading}</Text>
+                  {/* Uncomment below line to display description */}
+                  {/* <Text style={tw`text-sm`}>{content.description.markdown}</Text> */}
+                  <Text className='text-sm text-gray-700'>{content.output.markdown}</Text>
+                </View>
+              ))}
             </View>
-          ))}
+          )}
         </View>
       ))}
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-  },
-  errorText: {
-    fontSize: 16,
-    color: 'red',
-    textAlign: 'center',
-  },
-  chapterContainer: {
-    marginBottom: 20,
-  },
-  chapterTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-  },
-  contentContainer: {
-    marginTop: 10,
-  },
-  heading: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  description: {
-    fontSize: 16,
-    marginTop: 5,
-  },
-  output: {
-    fontSize: 16,
-    marginTop: 5,
-    color: 'green',
-  },
-});
 
 export default Chapture;

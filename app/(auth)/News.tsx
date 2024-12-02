@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { useLocalSearchParams } from 'expo-router';
 import Chapture from '@/components/Course/Chapture';
 
@@ -53,7 +53,11 @@ const News: React.FC = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView className='p-3'>
+
+      <View className='bg-gray-200 p-4 rounded-xl'>
+
+
       {/* Banner */}
       {bannerUrl && <Image source={{ uri: bannerUrl }} style={styles.banner} />}
 
@@ -84,20 +88,25 @@ const News: React.FC = () => {
       </View>
 
       {/* Render Chapture Component */}
-      <Chapture
+
+
+
+      </View>
+  <View className='bg-gray-200  mt-6  rounded-xl'>
+  <Text className='text-2xl font-bold'>Chaptures</Text>
+  <Chapture
         coursettt={{
           chapters: parsedChapters,
         }}
       />
-    </View>
+
+  </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 16,
-    backgroundColor: 'white',
-  },
+
   banner: {
     width: '100%',
     height: 200,
