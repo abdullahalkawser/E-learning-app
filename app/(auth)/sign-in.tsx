@@ -1,13 +1,14 @@
 import { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useSignIn } from '@clerk/clerk-expo';
+import { useSignIn, useAuth } from '@clerk/clerk-expo'; // Use useAuth for sign out
 import { useRouter } from 'expo-router'; // for navigation
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const { signIn } = useSignIn();
+  const { signOut } = useAuth(); // Hook to sign out the user if needed
   const router = useRouter(); // hook for navigation
 
   const handleLogin = async () => {
@@ -15,30 +16,35 @@ const Login: React.FC = () => {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
-  
+
     try {
+      // Sign out from any active sessions before logging in
+      await signOut();
+
       if (!signIn) {
         throw new Error('Sign-in service is not available');
       }
-  
+
       const signInAttempt = await signIn.create({
         identifier: email,
         password: password,
       });
-  
+
       console.log('Sign-in attempt result:', signInAttempt); // Log the result to inspect
-  
+
       if (signInAttempt.status === 'complete') {
-        router.push('/welcome');
+        router.push('/(root)/(tabs)/home'); // Navigate to the welcome page on successful sign-in
       } else {
         Alert.alert('Error', 'Failed to sign in');
       }
     } catch (error: any) {
       console.error('Login Error:', error);
-      Alert.alert('Error', error.errors ? error.errors[0].message : 'Something went wrong during login.');
+      Alert.alert(
+        'Error',
+        error.errors ? error.errors[0].message : 'Something went wrong during login.'
+      );
     }
   };
-  
 
   return (
     <View style={styles.container}>

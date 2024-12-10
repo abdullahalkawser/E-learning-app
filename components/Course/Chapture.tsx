@@ -1,7 +1,7 @@
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
-
+import { Link } from 'expo-router';
 
 type ChapterContent = {
   heading: string;
@@ -24,47 +24,69 @@ type ChaptureProps = {
 const Chapture: React.FC<ChaptureProps> = ({ coursettt }) => {
   const { chapters } = coursettt;
 
-  const [visibleChapterIndex, setVisibleChapterIndex] = useState<number | null>(null);
-
-  const toggleChapterVisibility = (index: number) => {
-    setVisibleChapterIndex(visibleChapterIndex === index ? null : index);
-  };
-
   if (!Array.isArray(chapters) || chapters.length === 0) {
     return (
-      <View className='bg-red-500'>
-        <Text className='text-red-700 text-lg' >No chapters available</Text>
+      <View style={styles.noChaptersContainer}>
+        <Text style={styles.noChaptersText}>No chapters available</Text>
       </View>
     );
   }
 
   return (
-    <View className='p-2 mt-5'>
-      {chapters.map((chapter, chapterIndex) => (
-        <View key={chapter.id} className='mb-5'>
-<View className=" p-3 flex-row justify-between items-center rounded-xl bg-gray-100 h-20">
-  <TouchableOpacity onPress={() => toggleChapterVisibility(chapterIndex)}>
-    <Text className="text-lg font-bold">{chapterIndex +0 + 1}. {chapter.title}</Text>
-  </TouchableOpacity>
-  <Ionicons name="play-circle" size={27} color="black" className="-ml-10" />
-</View>
-
-          {visibleChapterIndex === chapterIndex && (
-            <View>
-              {chapter.content.map((content, index) => (
-                <View key={index} className='ml-5 mb-3'>
-                  <Text className='text-base font-semibold'>{content.heading}</Text>
-                  {/* Uncomment below line to display description */}
-                  {/* <Text style={tw`text-sm`}>{content.description.markdown}</Text> */}
-                  <Text className='text-sm text-gray-700'>{content.output.markdown}</Text>
-                </View>
-              ))}
-            </View>
-          )}
+    <View style={styles.container}>
+      {chapters.map((chapter, index) => (
+        <View key={chapter.id || index} style={styles.chapterContainer}>
+          <View style={styles.contentContainer}>
+            <Text style={styles.chapterTitle}>{chapter.title}</Text>
+            <Link
+              style={styles.iconButton}
+              href={{
+                pathname: '/(auth)/chapture',
+                params: { chapter: JSON.stringify(chapter) },
+              }}
+            >
+              <Ionicons name="arrow-forward-circle" size={24} color="#007bff" />
+            </Link>
+          </View>
         </View>
       ))}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 16,
+    marginTop: 10,
+  },
+  chapterContainer: {
+    padding: 12,
+    backgroundColor: '#e8e8e8',
+    borderRadius: 8,
+    marginTop: 8,
+  },
+  chapterTitle: {
+    fontSize: 18,
+    fontWeight: '700',
+  },
+  contentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  iconButton: {
+    padding: 4,
+  },
+  noChaptersContainer: {
+    backgroundColor: '#f8d7da',
+    padding: 16,
+    borderRadius: 8,
+    alignItems: 'center',
+  },
+  noChaptersText: {
+    color: '#721c24',
+    fontSize: 18,
+  },
+});
 
 export default Chapture;

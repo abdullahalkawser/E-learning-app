@@ -4,6 +4,18 @@ import { useSignUp } from '@clerk/clerk-expo';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
+const styles = {
+  link: {
+    fontSize: 14,
+    color: '#3b82f6',
+    textAlign: 'center',
+    marginTop: 10,
+  },
+  linkText: {
+    fontWeight: 'bold',
+  },
+};
+
 export default function SignUpScreen() {
   const { isLoaded, signUp, setActive } = useSignUp();
   const router = useRouter();
@@ -41,17 +53,17 @@ export default function SignUpScreen() {
     if (!isLoaded) {
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
       const completeSignUp = await signUp.attemptEmailAddressVerification({
         code,
       });
-  
+
       if (completeSignUp.status === 'complete') {
         await setActive({ session: completeSignUp.createdSessionId });
-        router.push('/(root)/(tabs)/home');
+        router.push('/(auth)/sign-in');
       } else {
         Alert.alert('Verification Error', 'Verification failed. Please check the code and try again.');
         console.error(JSON.stringify(completeSignUp, null, 2));
@@ -126,6 +138,9 @@ export default function SignUpScreen() {
           >
             <Text style={{ color: '#fff', fontSize: 16, fontWeight: 'bold' }}>Sign Up</Text>
           </TouchableOpacity>
+          <Text  onPress={() => router.push('/sign-in')}>
+            Already have an account? <Text >Sign In</Text>
+          </Text>
         </View>
       )}
 

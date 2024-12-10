@@ -76,7 +76,7 @@ const Courseitem: React.FC<CourseItemProps> = ({ item }) => {
 
       <Link
         href={{
-          pathname: '/(auth)/News',
+          pathname: '/(auth)/course',
           params: {
             id: item.id,
             name: item.name,

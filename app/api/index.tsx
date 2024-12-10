@@ -44,3 +44,24 @@ return result
 }
 
 
+
+
+
+export const enrollCourse = async (courseId: string, userEmail: string) => {
+  const mutation = gql`
+    mutation EnrollCourse($courseId: String!, $userEmail: String!) {
+      createUserEnrolledCourse(
+        data: {
+          courseId: $courseId,
+          userEmail: $userEmail,
+          course: { connect: { id: $courseId } }
+        }
+      ) {
+        id
+      }
+    }
+  `;
+  const variables = { courseId, userEmail };
+  const result = await request(MASTAR_URL, mutation, variables);
+  return result;
+};
