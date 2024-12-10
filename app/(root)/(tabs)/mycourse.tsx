@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {  View, Text, StyleSheet, FlatList, Image, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, FlatList, Image, Dimensions, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -19,6 +19,15 @@ const MyCourse: React.FC = () => {
     fetchCourses();
   }, []);
 
+  const handleDeleteCourse = async (courseId: string) => {
+    // Filter out the course to delete
+    const updatedCourses = courses.filter((course) => course.id !== courseId);
+    // Save the updated courses back to AsyncStorage
+    await AsyncStorage.setItem('enrolledCourses', JSON.stringify(updatedCourses));
+    // Update the state
+    setCourses(updatedCourses);
+  };
+
   if (courses.length === 0) {
     return (
       <SafeAreaView style={styles.emptyContainer}>
@@ -33,14 +42,23 @@ const MyCourse: React.FC = () => {
         data={courses}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Link href={'/(auth)/course'} style={styles.courseItem}>
-            <Image source={{ uri: item.bannerUrl }} style={styles.banner} />
-            <View style={styles.details}>
-              <Text style={styles.title}>{item.name}</Text>
-              <Text style={styles.author}>By {item.author}</Text>
-              <Text style={styles.time}>⏰ {item.time} Hours</Text>
-            </View>
-          </Link>
+          <View style={styles.courseItem}>
+            <Link href={'/(auth)/course'} style={styles.link}>
+              <Image source={{ uri: item.bannerUrl }} style={styles.banner} />
+              <View style={styles.details}>
+                <Text style={styles.title}>{item.name}</Text>
+                <Text style={styles.author}>By {item.author}</Text>
+                <Text style={styles.time}>⏰ {item.time} Hours</Text>
+              </View>
+            </Link>
+            {/* Delete Button */}
+            <TouchableOpacity
+              style={styles.deleteButton}
+              onPress={() => handleDeleteCourse(item.id)}
+            >
+              <Text style={styles.deleteButtonText}>Delete</Text>
+            </TouchableOpacity>
+          </View>
         )}
         contentContainerStyle={styles.listContent}
       />
@@ -79,6 +97,9 @@ const styles = StyleSheet.create({
     elevation: 3,
     width: screenWidth - 32,
   },
+  link: {
+    flex: 1,
+  },
   banner: {
     width: '100%',
     height: 180,
@@ -104,10 +125,18 @@ const styles = StyleSheet.create({
     color: '#009688',
     marginBottom: 8,
   },
-  description: {
-    fontSize: 14,
-    color: '#777',
-    lineHeight: 20,
+  deleteButton: {
+    backgroundColor: '#f44336',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 8,
+    marginTop: 10,
+    alignItems: 'center',
+  },
+  deleteButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
